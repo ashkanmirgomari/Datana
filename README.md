@@ -1,4 +1,4 @@
-# 🛡️ Datana - Secure Registry System
+# 🛡️ Datana - mini-Local Database
 
 **Enterprise-grade secure data management with military-level encryption**
 
@@ -30,45 +30,48 @@ python project.py
 
 ```
 
-🔐 Default Login
-For first-time use, login with:
+## 🔐 Default Login
+**For first-time use, login with:**
 
-Username: root
+- 👤**Username: root**
 
-Password: root
+- 🔐**Password: root**
 
-👥 User Management
-After login you can:
+## 👥 User Management
 
-Create new users: useradd -u USERNAME -p PASSWORD -r ROLE
+**After login you can:**
 
-Change passwords: useredit -u USERNAME -np NEW_PASSWORD
+- **Create new users: useradd -u USERNAME -p PASSWORD -r ROLE**
 
-Modify user roles: usermod -u USERNAME -r ROLE
+- **Change passwords: useredit -u USERNAME -np NEW_PASSWORD**
 
-Delete users: userdel -u USERNAME
+- **Modify user roles: usermod -u USERNAME -r ROLE**
+
+- **Delete users: userdel -u USERNAME**
 
 
-🛠️ Advanced Password Change
-To change the default root password directly in code:
+## 🛠️ Advanced Password Change
 
-Open core/auth.py
+**To change the default root password directly in code:**
 
-Find line 32 (the generate_default_users function)
+**Open core/auth.py**
 
-Modify the root_hash value
+**Find line 32 (the generate_default_users function)**
 
-💻 Available Commands
-System Management
-bash
-status                    # System health monitoring
-stats                     # Statistics and analytics
+**Modify the root_hash value**
+
+## 💻 Available Commands
+**System Management**
+```bash
+status                    # System health monitoring**
+stats                     # Statistics and analytics**
 backup                    # Create encrypted backup
 restore                   # Restore from backup
 autobackup                # Configure auto-backup
 logs                      # View system logs
 Data Operations
-bash
+```
+```bash
 add -n John -l Doe...    # Add secure records
 search -fn John          # Advanced search
 view -id RECORD_ID       # View specific record
@@ -77,21 +80,24 @@ delete -id RECORD_ID     # Delete record
 lists                    # List all records with pagination
 export -f data.csv       # Export to CSV
 User Management (Root only)
-bash
-useradd -u john -p pass -r admin    # Add user
-useredit -u john -np newpass        # Change password
-usermod -u john -r staff            # Change role
-userdel -u john                     # Delete user
-userlist                            # List all users
-Utility Commands
-bash
-help                     # Show command help
-clear                    # Clear screen
-whoami                   # Show current user
-exit / logout            # Exit system
+```
+```bash
+useradd -u john -p pass -r admin    # Add user**
+useredit -u john -np newpass        # Change password**
+usermod -u john -r staff            # Change role**
+userdel -u john                     # Delete user**
+userlist                            # List all users**
+Utility Commands**
+```
+```bash
+help                     # Show command help**
+clear                    # Clear screen**
+whoami                   # Show current user**
+exit / logout            # Exit system**
+```
 
-
-🏗️ System Architecture
+## 🏗️ System Architecture
+```bash
 Core Modules:
 ├── Security Layer (auth.py, validators.py, secure_logger.py)
 ├── Database Engine (database.py, config_manager.py)
@@ -99,32 +105,34 @@ Core Modules:
 ├── Analytics Engine (analytics.py, stats.py)
 ├── Search System (advanced_search.py)
 └── Backup System (backup.py, autobackup.py)
+```
+
+## 🔒 Security Features
+
+**1 - End-to-end encryption for all stored data**
+
+**2 - Four-tier role system (root, admin, staff, viewer)**
+
+**3 - Session timeout after 15 minutes of inactivity**
+
+**4 - Secure password hashing with bcrypt**
+
+**5 - Audit logging with integrity verification**
+
+**6 - Input validation for Iranian data standards**
 
 
-🔒 Security Features
-End-to-end encryption for all stored data
-
-Four-tier role system (root, admin, staff, viewer)
-
-Session timeout after 15 minutes of inactivity
-
-Secure password hashing with bcrypt
-
-Audit logging with integrity verification
-
-Input validation for Iranian data standards
-
-
-🎯 Role Permissions
+## 🎯 Role Permissions
+```bash
 Role	Permissions
 root	Full system access, user management, backup/restore
 admin	Data operations, logs, system monitoring
 staff	Add, search, view, export records
 viewer	Search and view records only
+```
 
-
-📁 Project Structure
-text
+## 📁 Project Structure
+```bash
 Datana/
 ├── core/                 # Core system modules
 ├── scripts/              # Utility scripts
@@ -132,26 +140,28 @@ Datana/
 ├── project.py           # Main entry point
 ├── datana.py            # Alias for project.py
 └── requirements.txt     # Python dependencies
+```
+
+## ⚠️ Important Notes
+
+**1 - Change the default root password immediately after first login**
+
+**2 - Regular backups are recommended**
+
+**3 - System data is stored in encrypted format only**
+
+**4 - Session automatically logs out after 15 minutes of inactivity**
 
 
-⚠️ Important Notes
-Change the default root password immediately after first login
+## 🐛 Reporting Issues
 
-Regular backups are recommended
+**- Found a bug? Please create an issue with:**
 
-System data is stored in encrypted format only
+**- Steps to reproduce**
 
-Session automatically logs out after 15 minutes of inactivity
+**- Expected vs actual behavior**
 
+**- System environment details**
 
-🐛 Reporting Issues
-Found a bug? Please create an issue with:
-
-Steps to reproduce
-
-Expected vs actual behavior
-
-System environment details
-
-📄 License
-Copyright © 2024 Ashkan Mirgomari. All rights reserved.
+## 📄 License
+**Copyright © 2024 Ashkan Mirgomari. All rights reserved.**
