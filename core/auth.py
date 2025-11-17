@@ -26,6 +26,20 @@ def load_users():
     
     return generate_default_users()
 
+def generate_default_users():
+    import bcrypt
+    
+    root_hash = bcrypt.hashpw("root".encode(), bcrypt.gensalt()).decode()
+    
+    users = {
+        "root": {
+            "username": "root",
+            "password": root_hash,
+            "role": "root"
+        },
+    }
+    return users
+
 def save_users(users_dict):
     """ذخیره کاربران در فایل رمزگذاری شده"""
     key = get_encryption_key()

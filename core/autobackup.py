@@ -67,6 +67,7 @@ def autobackup_status():
         "next_backup": calculate_next_backup(config)
     }
 
+
 def calculate_next_backup(config):
     if not config["enabled"]:
         return "N/A"
