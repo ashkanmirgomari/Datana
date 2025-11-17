@@ -69,8 +69,8 @@ backup                    # Create encrypted backup
 restore                   # Restore from backup
 autobackup                # Configure auto-backup
 logs                      # View system logs
-Data Operations
 ```
+**Data Operations**
 ```bash
 add -n John -l Doe...    # Add secure records
 search -fn John          # Advanced search
@@ -79,16 +79,16 @@ edit                     # Edit existing record
 delete -id RECORD_ID     # Delete record
 lists                    # List all records with pagination
 export -f data.csv       # Export to CSV
-User Management (Root only)
 ```
+**User Management (Root only)**
 ```bash
 useradd -u john -p pass -r admin    # Add user**
 useredit -u john -np newpass        # Change password**
 usermod -u john -r staff            # Change role**
 userdel -u john                     # Delete user**
 userlist                            # List all users**
-Utility Commands**
 ```
+**Utility Commands**
 ```bash
 help                     # Show command help**
 clear                    # Clear screen**
