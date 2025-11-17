@@ -33,9 +33,9 @@ python project.py
 ## 🔐 Default Login
 **For first-time use, login with:**
 
-- 👤**Username: root**
+- 👤**Username:** ```root```
 
-- 🔐**Password: root**
+- 🔐**Password:** ```root```
 
 ## 👥 User Management
 
