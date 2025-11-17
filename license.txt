@@ -1,4 +1,4 @@
-Copyright (c) 2024 Ashkan Mirgomari
+Copyright (c) 2025 Ashkan Mirgomari
 
 All rights reserved.
 This software is protected by copyright law and international treaties.

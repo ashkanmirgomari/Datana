@@ -164,4 +164,4 @@ Datana/
 **- System environment details**
 
 ## 📄 License
-**Copyright © 2024 Ashkan Mirgomari. All rights reserved.**
+**Copyright © 2025 Ashkan Mirgomari. All rights reserved.**
