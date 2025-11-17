@@ -27,6 +27,9 @@ python project.py
 # 4. Login with default credentials:
 #    Username: root
 #    Password: root
+
+```
+
 🔐 Default Login
 For first-time use, login with:
 
@@ -44,6 +47,7 @@ Change passwords: useredit -u USERNAME -np NEW_PASSWORD
 Modify user roles: usermod -u USERNAME -r ROLE
 
 Delete users: userdel -u USERNAME
+
 
 🛠️ Advanced Password Change
 To change the default root password directly in code:
@@ -85,8 +89,9 @@ help                     # Show command help
 clear                    # Clear screen
 whoami                   # Show current user
 exit / logout            # Exit system
+
+
 🏗️ System Architecture
-text
 Core Modules:
 ├── Security Layer (auth.py, validators.py, secure_logger.py)
 ├── Database Engine (database.py, config_manager.py)
@@ -94,6 +99,8 @@ Core Modules:
 ├── Analytics Engine (analytics.py, stats.py)
 ├── Search System (advanced_search.py)
 └── Backup System (backup.py, autobackup.py)
+
+
 🔒 Security Features
 End-to-end encryption for all stored data
 
@@ -107,12 +114,15 @@ Audit logging with integrity verification
 
 Input validation for Iranian data standards
 
+
 🎯 Role Permissions
 Role	Permissions
 root	Full system access, user management, backup/restore
 admin	Data operations, logs, system monitoring
 staff	Add, search, view, export records
 viewer	Search and view records only
+
+
 📁 Project Structure
 text
 Datana/
@@ -122,6 +132,8 @@ Datana/
 ├── project.py           # Main entry point
 ├── datana.py            # Alias for project.py
 └── requirements.txt     # Python dependencies
+
+
 ⚠️ Important Notes
 Change the default root password immediately after first login
 
@@ -130,6 +142,7 @@ Regular backups are recommended
 System data is stored in encrypted format only
 
 Session automatically logs out after 15 minutes of inactivity
+
 
 🐛 Reporting Issues
 Found a bug? Please create an issue with:
