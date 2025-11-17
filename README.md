@@ -41,13 +41,13 @@ python project.py
 
 **After login you can:**
 
-- **Create new users: useradd -u USERNAME -p PASSWORD -r ROLE**
+- **Create new users:** ```useradd -u USERNAME -p PASSWORD -r ROLE ```
 
-- **Change passwords: useredit -u USERNAME -np NEW_PASSWORD**
+- **Change passwords:** ```useredit -u USERNAME -np NEW_PASSWORD ```
 
-- **Modify user roles: usermod -u USERNAME -r ROLE**
+- **Modify user roles:** ```usermod -u USERNAME -r ROLE ```
 
-- **Delete users: userdel -u USERNAME**
+- **Delete users:** ```userdel -u USERNAME ```
 
 
 ## 🛠️ Advanced Password Change
