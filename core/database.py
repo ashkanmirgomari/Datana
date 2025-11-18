@@ -7,13 +7,11 @@ from core.config_manager import get_encryption_key
 from core.validators import DataValidator
 
 def ensure_data_dir():
-    """Ensure data directory exists"""
     d = os.path.dirname(RECORDS_PATH)
     os.makedirs(d, exist_ok=True)
     os.makedirs(BACKUP_DIR, exist_ok=True)
 
 def get_exports_dir():
-    """Get exports directory in system standard location"""
     if os.name == 'nt':  # Windows
         base_dir = os.path.join(os.path.expanduser("~"), "Datana")
     else:  # Linux/Mac
@@ -24,7 +22,6 @@ def get_exports_dir():
     return exports_dir
 
 def load_records():
-    """Load records from encrypted file"""
     key = get_encryption_key()
     ensure_data_dir()
     
@@ -42,7 +39,7 @@ def load_records():
         return []
 
 def save_records(records):
-    """Save records to encrypted file"""
+
     key = get_encryption_key()
     ensure_data_dir()
     
@@ -56,10 +53,6 @@ def save_records(records):
         print(f"Error saving records: {e}")
 
 def validate_iranian_phone(phone):
-    """
-    Validate Iranian phone number
-    Correct format: +989123456789 (12 digits)
-    """
     if not phone:
         return True, ""  # Phone is optional
     
@@ -78,13 +71,6 @@ def validate_iranian_phone(phone):
     return True, ""
 
 def validate_national_id(national_id):
-    """
-    Validate Iranian national ID
-    Algorithm: 
-    1. Must be 10 digits
-    2. All digits cannot be the same
-    3. Check digit must be correct
-    """
     if not national_id:
         return True, ""  # National ID is optional
     
@@ -121,9 +107,6 @@ def validate_national_id(national_id):
     return True, "Valid national ID"
 
 def format_iranian_phone(phone_part):
-    """
-    Format phone number from 9-digit part to full format
-    """
     if not phone_part:
         return None
     
@@ -148,19 +131,11 @@ def format_iranian_phone(phone_part):
     raise ValueError("Invalid phone number. Enter 10 digits after +98")
 
 def capitalize_name(name):
-    """
-    Capitalize first letter of name
-    Example: ashkan -> Ashkan, mirgomari -> Mirgomari
-    """
     if not name:
         return name
     return name[0].upper() + name[1:].lower()
 
 def is_duplicate_record(phone=None, national_id=None):
-    """
-    Check for duplicate records based on phone or national ID only
-    Names can be duplicate, but phone and national ID must be unique
-    """
     records = load_records()
     
     for record in records:
@@ -173,43 +148,35 @@ def is_duplicate_record(phone=None, national_id=None):
     return False, ""
 
 def add_record(first, last, national_id=None, dob=None, phone=None, address=None, tags=None, notes=None):
-    """Add new record with advanced validation"""
     
-    # اعتبارسنجی پیشرفته اسم
     is_valid_first, first_msg = DataValidator.validate_english_name(first, "First name")
     if not is_valid_first:
         raise ValueError(f"First name validation error: {first_msg}")
     
-    # اعتبارسنجی پیشرفته فامیل
     is_valid_last, last_msg = DataValidator.validate_english_name(last, "Last name")
     if not is_valid_last:
         raise ValueError(f"Last name validation error: {last_msg}")
     
-    # اعتبارسنجی پیشرفته کد ملی
     if national_id:
         is_valid_national, national_msg = DataValidator.validate_national_id(national_id)
         if not is_valid_national:
             raise ValueError(f"National ID validation error: {national_msg}")
     
-    # اعتبارسنجی پیشرفته تلفن
     if phone:
         is_valid_phone, phone_msg = DataValidator.validate_iranian_phone(phone)
         if not is_valid_phone:
             raise ValueError(f"Phone validation error: {phone_msg}")
     
-    # اعتبارسنجی پیشرفته شهر (فقط نام شهر)
     if address:
         is_valid_city, city_msg = DataValidator.validate_city_name(address)
         if not is_valid_city:
             raise ValueError(f"City validation error: {city_msg}")
     
-    # Capitalize names و شهر
     first = DataValidator.capitalize_name(first)
     last = DataValidator.capitalize_name(last)
     if address:
         address = DataValidator.capitalize_city(address)
     
-    # Check for duplicates (only phone and national ID)
     is_duplicate, duplicate_msg = is_duplicate_record(phone=phone, national_id=national_id)
     if is_duplicate:
         raise ValueError(f"Duplicate record: {duplicate_msg}")
@@ -237,10 +204,9 @@ def add_record(first, last, national_id=None, dob=None, phone=None, address=None
         })
     }
     
-    # بررسی ناهنجاری‌های امنیتی
     anomalies = DataValidator.detect_anomaly(item)
     if anomalies:
-        print(f"⚠️ Security warning: {', '.join(anomalies)}")
+        print(f"Security warning: {', '.join(anomalies)}")
         log(f"SECURITY_WARNING: Anomalies detected in record {rid} - {anomalies}")
     
     recs.append(item)
@@ -250,7 +216,6 @@ def add_record(first, last, national_id=None, dob=None, phone=None, address=None
 
 
 def search_by_id(rid):
-    """Search record by ID"""
     recs = load_records()
     for r in recs:
         if r["id"] == rid:
@@ -258,7 +223,6 @@ def search_by_id(rid):
     return None
 
 def search_by_name_partial(term):
-    """Search records by name (partial)"""
     recs = load_records()
     term_low = term.lower()
     result = []
@@ -273,7 +237,6 @@ def search_by_name_partial(term):
     return result
 
 def search_by_national_id(national_id):
-    """Search record by national ID"""
     recs = load_records()
     for r in recs:
         if r.get("national_id") == national_id:
@@ -281,7 +244,6 @@ def search_by_national_id(national_id):
     return None
 
 def search_by_phone(phone):
-    """Search record by phone"""
     recs = load_records()
     for r in recs:
         if r.get("phone") == phone:
@@ -289,10 +251,8 @@ def search_by_phone(phone):
     return None
 
 def advanced_search(first_name=None, last_name=None, city=None, national_id=None, phone=None, search_mode="and"):
-    """Advanced search with multiple filters - SEPARATE FIRST/LAST NAME"""
     records = load_records()
     
-    # If no filters provided, return all records
     if not any([first_name, last_name, city, national_id, phone]):
         return records
     
@@ -301,55 +261,46 @@ def advanced_search(first_name=None, last_name=None, city=None, national_id=None
     for record in records:
         matches = []
         
-        # First name search (partial match)
         if first_name and first_name.strip():
             first_name_match = False
             if record.get('first_name') and first_name.lower() in record['first_name'].lower():
                 first_name_match = True
             matches.append(first_name_match)
         
-        # Last name search (partial match)
         if last_name and last_name.strip():
             last_name_match = False
             if record.get('last_name') and last_name.lower() in record['last_name'].lower():
                 last_name_match = True
             matches.append(last_name_match)
         
-        # City filter (partial match)
         if city and city.strip():
             city_match = False
             if record.get('address') and city.lower() in record['address'].lower():
                 city_match = True
             matches.append(city_match)
         
-        # National ID filter (exact match)
         if national_id and national_id.strip():
             national_id_match = False
             if record.get('national_id') and record['national_id'] == national_id:
                 national_id_match = True
             matches.append(national_id_match)
         
-        # Phone filter (exact match)
         if phone and phone.strip():
             phone_match = False
             if record.get('phone') and record['phone'] == phone:
                 phone_match = True
             matches.append(phone_match)
         
-        # Determine if record matches based on search mode
         if search_mode == "and":
-            # ALL filters must match
             if matches and all(matches):
                 results.append(record)
-        else:  # "or" mode
-            # ANY filter can match
+        else:
             if matches and any(matches):
                 results.append(record)
     
     return results
 
 def delete_record_by_id(record_id):
-    """Delete record by ID - returns success status"""
     records = load_records()
     
     for i, record in enumerate(records):
@@ -361,7 +312,6 @@ def delete_record_by_id(record_id):
     return False
 
 def export_csv(path=None):
-    """Export all records to CSV with system-standard exports directory"""
     import csv
     import time
     
@@ -407,7 +357,6 @@ def export_csv(path=None):
         return 0, None
 
 def create_backup():
-    """Create backup of records"""
     import shutil
     import time
     
@@ -439,7 +388,6 @@ def create_backup():
         return None
 
 def get_system_stats():
-    """Get comprehensive system statistics"""
     records = load_records()
     from core.auth import load_users
     
@@ -455,19 +403,15 @@ def get_system_stats():
         "newest_record": None
     }
     
-    # Analyze records
     for record in records:
-        # Count by city
         city = record.get('address', 'Unknown')
         stats["records_by_city"][city] = stats["records_by_city"].get(city, 0) + 1
         
-        # Count records with phone/national_id
         if record.get('phone'):
             stats["records_with_phone"] += 1
         if record.get('national_id'):
             stats["records_with_national_id"] += 1
         
-        # Find oldest and newest records
         if stats["oldest_record"] is None or record.get('created_at', '') < stats["oldest_record"].get('created_at', ''):
             stats["oldest_record"] = record
         if stats["newest_record"] is None or record.get('created_at', '') > stats["newest_record"].get('created_at', ''):
@@ -476,7 +420,6 @@ def get_system_stats():
     return stats
 
 def get_last_backup_info():
-    """Get information about the last backup"""
     if not os.path.exists(BACKUP_DIR):
         return "No backups found"
     
@@ -492,7 +435,6 @@ def get_last_backup_info():
     return f"{latest_backup} ({datetime.fromtimestamp(backup_time).strftime('%Y-%m-%d %H:%M:%S')})"
 
 def get_available_backups():
-    """Get list of available backups"""
     if not os.path.exists(BACKUP_DIR):
         return []
     
@@ -514,19 +456,16 @@ def get_available_backups():
     return sorted(backups, key=lambda x: x['created'], reverse=True)
 
 def restore_from_backup(backup_filename):
-    """Restore records from a backup file"""
     backup_path = os.path.join(BACKUP_DIR, backup_filename)
     
     if not os.path.exists(backup_path):
         return False, "Backup file not found"
     
     try:
-        # Create backup of current data before restore
         current_backup = create_backup()
         if current_backup:
             print(f"Current data backed up to: {current_backup}")
         
-        # Copy backup to main records file
         import shutil
         shutil.copy(backup_path, RECORDS_PATH)
         log(f"RESTORE: restored from {backup_filename}")
@@ -535,13 +474,11 @@ def restore_from_backup(backup_filename):
         return False, f"Restore failed: {e}"
 
 def cleanup_old_backups(max_backups=10):
-    """Clean up old backups, keep only the most recent ones"""
     backups = get_available_backups()
     
     if len(backups) <= max_backups:
         return
     
-    # Keep only the most recent backups
     backups_to_keep = backups[:max_backups]
     backups_to_delete = backups[max_backups:]
     
@@ -553,12 +490,10 @@ def cleanup_old_backups(max_backups=10):
             print(f"Error deleting backup {backup['filename']}: {e}")
 
 def get_records_count():
-    """Get total records count"""
     recs = load_records()
     return len(recs)
 
 def delete_all_records():
-    """Delete all records (development only)"""
     try:
         if os.path.exists(RECORDS_PATH):
             os.remove(RECORDS_PATH)
@@ -570,11 +505,9 @@ def delete_all_records():
         print(f"Delete failed: {e}")
 
 def get_recent_records(limit=5):
-    """Get recently added records"""
     recs = load_records()
     return recs[-limit:] if recs else []
 
 def show_exports_location():
-    """Show user where exports are saved"""
     exports_dir = get_exports_dir()
     return exports_dir

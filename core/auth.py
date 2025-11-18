@@ -9,9 +9,7 @@ from core.config_manager import get_encryption_key
 def generate_default_users():
     return users
 
-def load_users():
-    """اول از فایل کاربران میخونه، اگر نبود از پیشفرض استفاده میکنه"""
-    
+def load_users():    
     if os.path.exists(USERS_PATH):
         try:
             key = get_encryption_key()
@@ -41,7 +39,6 @@ def generate_default_users():
     return users
 
 def save_users(users_dict):
-    """ذخیره کاربران در فایل رمزگذاری شده"""
     key = get_encryption_key()
     fernet = Fernet(key)
     users_list = list(users_dict.values())

@@ -1,14 +1,11 @@
-# core/advanced_search.py
 import re
 from core.database import load_records
 from datetime import datetime
 
 class AdvancedSearch:
-    """سیستم جستجوی پیشرفته"""
-    
     @staticmethod
     def regex_search(pattern, field='all'):
-        """جستجو با regex"""
+
         records = load_records()
         results = []
         
@@ -19,7 +16,6 @@ class AdvancedSearch:
         
         for record in records:
             if field == 'all':
-                # جستجو در همه فیلدهای متنی
                 text_to_search = f"{record.get('first_name', '')} {record.get('last_name', '')} {record.get('address', '')} {record.get('national_id', '')} {record.get('phone', '')}"
                 if regex.search(text_to_search):
                     results.append(record)
@@ -31,7 +27,6 @@ class AdvancedSearch:
     
     @staticmethod
     def date_search(date_filter, field='created_at'):
-        """جستجو بر اساس تاریخ"""
         records = load_records()
         results = []
         
@@ -53,7 +48,6 @@ class AdvancedSearch:
     
     @staticmethod
     def empty_field_search(field):
-        """پیدا کردن رکوردهای با فیلد خالی"""
         records = load_records()
         results = []
         
@@ -65,7 +59,6 @@ class AdvancedSearch:
     
     @staticmethod
     def range_search(field, min_val=None, max_val=None):
-        """جستجو در بازه عددی (برای future use)"""
         records = load_records()
         results = []
         
@@ -80,7 +73,6 @@ class AdvancedSearch:
     
     @staticmethod
     def complex_search(filters):
-        """جستجوی ترکیبی با فیلترهای پیشرفته"""
         records = load_records()
         results = []
         
@@ -99,7 +91,6 @@ class AdvancedSearch:
     
     @staticmethod
     def _check_condition(record, field, condition):
-        """بررسی یک شرط روی رکورد"""
         value = record.get(field, '')
         
         if condition.get('type') == 'regex':

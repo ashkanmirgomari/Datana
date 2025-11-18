@@ -1,9 +1,7 @@
-# core/argument_parser.py - VERSION COMPLETE WITH USEREDIT
 import re
 from core.validators import DataValidator
 
 def parse_arguments(args, command):
-    """پارسر عمومی برای همه دستورات"""
     args_str = " ".join(args)
     
     patterns = {
@@ -63,7 +61,6 @@ def parse_arguments(args, command):
     return extracted
 
 def handle_useradd_arguments(parts):
-    """پردازش آرگومان‌های useradd"""
     args = parse_arguments(parts[1:], 'useradd')
     
     required = ['username', 'password']
@@ -72,7 +69,6 @@ def handle_useradd_arguments(parts):
             print(f"Error: Missing required argument -{field[0]}")
             return None
     
-    # اعتبارسنجی
     if 'role' not in args:
         args['role'] = 'viewer'
     
@@ -83,7 +79,6 @@ def handle_useradd_arguments(parts):
     return args
 
 def handle_userdel_arguments(parts):
-    """پردازش آرگومان‌های userdel"""
     args = parse_arguments(parts[1:], 'userdel')
     
     if 'username' not in args:
@@ -93,7 +88,6 @@ def handle_userdel_arguments(parts):
     return args
 
 def handle_usermod_arguments(parts):
-    """پردازش آرگومان‌های usermod"""
     args = parse_arguments(parts[1:], 'usermod')
     
     required = ['username', 'role']
@@ -109,14 +103,12 @@ def handle_usermod_arguments(parts):
     return args
 
 def handle_useredit_arguments(parts):
-    """پردازش آرگومان‌های useredit"""
     args = parse_arguments(parts[1:], 'useredit')
     
     if 'username' not in args:
         print("Error: Missing required argument -u")
         return None
     
-    # حداقل یکی از new_password یا new_username باید باشه
     if 'new_password' not in args and 'new_username' not in args:
         print("Error: Either -np (new password) or -nu (new username) is required")
         return None
@@ -124,7 +116,6 @@ def handle_useredit_arguments(parts):
     return args
 
 def handle_add_arguments(parts):
-    """پردازش آرگومان‌های add"""
     args = parse_arguments(parts[1:], 'add')
     
     required = ['first_name', 'last_name', 'national_id', 'phone', 'city']
@@ -133,39 +124,34 @@ def handle_add_arguments(parts):
             print(f"Error: Missing required argument -{field[0]}")
             return None
     
-    # اعتبارسنجی
+
     try:
-        # اعتبارسنجی اسم
+
         is_valid_first, first_msg = DataValidator.validate_english_name(args['first_name'], "First name")
         if not is_valid_first:
             print(f"Error: {first_msg}")
             return None
-        
-        # اعتبارسنجی فامیل
+
         is_valid_last, last_msg = DataValidator.validate_english_name(args['last_name'], "Last name")
         if not is_valid_last:
             print(f"Error: {last_msg}")
             return None
-        
-        # اعتبارسنجی کد ملی
+
         is_valid_national, national_msg = DataValidator.validate_national_id(args['national_id'])
         if not is_valid_national:
             print(f"Error: {national_msg}")
             return None
         
-        # اعتبارسنجی تلفن
         is_valid_phone, phone_msg = DataValidator.validate_iranian_phone(args['phone'])
         if not is_valid_phone:
             print(f"Error: {phone_msg}")
             return None
-        
-        # اعتبارسنجی شهر
+
         is_valid_city, city_msg = DataValidator.validate_city_name(args['city'])
         if not is_valid_city:
             print(f"Error: {city_msg}")
             return None
-        
-        # capitalize کردن
+
         first_name = DataValidator.capitalize_name(args['first_name'])
         last_name = DataValidator.capitalize_name(args['last_name'])
         city = DataValidator.capitalize_city(args['city'])
@@ -184,12 +170,10 @@ def handle_add_arguments(parts):
         return None
 
 def handle_status_arguments(parts):
-    """پردازش آرگومان‌های status"""
     args = parse_arguments(parts[1:], 'status')
     return args
 
 def handle_delete_arguments(parts):
-    """پردازش آرگومان‌های delete"""
     args = parse_arguments(parts[1:], 'delete')
     
     if 'record_id' not in args:
@@ -199,7 +183,6 @@ def handle_delete_arguments(parts):
     return args
 
 def handle_view_arguments(parts):
-    """پردازش آرگومان‌های view"""
     args = parse_arguments(parts[1:], 'view')
     
     if 'record_id' not in args:
@@ -209,19 +192,15 @@ def handle_view_arguments(parts):
     return args
 
 def handle_search_arguments(parts):
-    """پردازش آرگومان‌های search"""
     args = parse_arguments(parts[1:], 'search')
     
-    # برای search همه فیلدها اختیاری هستن
     return args
 
 def handle_export_arguments(parts):
-    """پردازش آرگومان‌های export"""
     args = parse_arguments(parts[1:], 'export')
     return args
 
 def show_command_help(command):
-    """نمایش راهنمای دستورات"""
     helps = {
         'useradd': """
 useradd -u USERNAME -p PASSWORD [-r ROLE] [-y]

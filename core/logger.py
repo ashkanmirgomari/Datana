@@ -14,5 +14,4 @@ def log(event):
         with open(LOG_PATH, "a", encoding="utf-8") as f:
             f.write(f"[{timestamp()}] {event}\n")
     except Exception:
-        # logger must not crash the app
         pass

@@ -6,11 +6,9 @@ from core.utils import LOG_PATH, timestamp
 from core.config_manager import get_encryption_key
 
 class SecureLogger:
-    """سیستم لاگ‌گیری امن"""
     
     @staticmethod
     def ensure_secure_log():
-        """ایجاد فایل لاگ با امنیت بالا"""
         log_dir = os.path.dirname(LOG_PATH)
         os.makedirs(log_dir, exist_ok=True)
         
@@ -20,7 +18,7 @@ class SecureLogger:
     
     @staticmethod
     def calculate_log_hash():
-        """محاسبه هش فایل لاگ برای تشخیص تغییرات"""
+
         if not os.path.exists(LOG_PATH):
             return None
         
@@ -28,7 +26,7 @@ class SecureLogger:
             with open(LOG_PATH, 'rb') as f:
                 content = f.read()
             
-            # استفاده از کلید سیستم برای HMAC
+            #HMAC Encryption
             key = get_encryption_key()
             log_hash = hmac.new(key, content, hashlib.sha256).hexdigest()
             return log_hash
@@ -37,38 +35,32 @@ class SecureLogger:
     
     @staticmethod
     def secure_log(event):
-        """لاگ‌گیری امن با تشخیص تغییرات"""
         try:
             SecureLogger.ensure_secure_log()
             
-            # بررسی یکپارچگی فایل لاگ
             current_hash = SecureLogger.calculate_log_hash()
             
             with open(LOG_PATH, 'a', encoding='utf-8') as f:
                 f.write(f"[{timestamp()}] {event}\n")
             
-            # ذخیره هش جدید
             new_hash = SecureLogger.calculate_log_hash()
             
-            # اگر هش تغییر کرد، ممکن است فایل دستکاری شده باشد
             if current_hash and current_hash != new_hash:
                 with open(LOG_PATH, 'a', encoding='utf-8') as f:
                     f.write(f"[{timestamp()}] SECURITY_ALERT: Log file integrity compromised\n")
             
         except Exception as e:
-            # لاگر نباید باعث کرش برنامه شود
+
             pass
     
     @staticmethod
     def verify_log_integrity():
-        """بررسی یکپارچگی فایل لاگ"""
         if not os.path.exists(LOG_PATH):
             return True, "Log file doesn't exist"
         
         try:
             current_hash = SecureLogger.calculate_log_hash()
             
-            # خواندن آخرین خط برای بررسی دستکاری
             with open(LOG_PATH, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
                 if lines and 'SECURITY_ALERT' in lines[-1]:
@@ -81,7 +73,6 @@ class SecureLogger:
     
     @staticmethod
     def get_log_stats():
-        """آمار فایل لاگ"""
         if not os.path.exists(LOG_PATH):
             return {"size": 0, "lines": 0, "integrity": "No log file"}
         

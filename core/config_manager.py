@@ -7,7 +7,6 @@ from core.utils import DATA_DIR
 CONFIG_FILE = os.path.join(DATA_DIR, "datana_config.json")
 
 def get_or_create_config():
-    """دریافت یا ساخت config خودکار"""
     os.makedirs(DATA_DIR, exist_ok=True)
     
     if os.path.exists(CONFIG_FILE):
@@ -28,10 +27,8 @@ def get_or_create_config():
                     
             return config
         except:
-            # اگر فایل config خراب بود، از اول می‌سازیم
             pass
-    
-    # ساخت config جدید
+    #End to End Encrypt
     new_key = Fernet.generate_key().decode()
     config = {
         "DATANA_KEY": new_key,
@@ -53,17 +50,14 @@ def get_or_create_config():
     return config
 
 def get_encryption_key():
-    """دریافت کلید رمزگذاری از config"""
     config = get_or_create_config()
     return config["DATANA_KEY"].encode()
 
 def show_key_info():
-    """نمایش اطلاعات کلید برای کاربر"""
     config = get_or_create_config()
     return config["DATANA_KEY"]
 
 def update_autobackup_config(enabled=None, mode=None):
-    """آپدیت تنظیمات autobackup"""
     config = get_or_create_config()
     
     if enabled is not None:
@@ -80,12 +74,10 @@ def update_autobackup_config(enabled=None, mode=None):
         return False
 
 def get_autobackup_config():
-    """دریافت تنظیمات autobackup"""
     config = get_or_create_config()
     return config["autobackup"]
 
 def set_last_backup_time():
-    """ذخیره زمان آخرین بک‌آپ"""
     from datetime import datetime
     config = get_or_create_config()
     config["autobackup"]["last_backup"] = datetime.now().isoformat()

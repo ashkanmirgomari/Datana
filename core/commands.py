@@ -71,8 +71,8 @@ COMMANDS = {
     "logout": {"roles": {"root", "admin", "staff", "viewer"}, "desc": "Quit"}
 }
 
+#Chatgpt helped me to create command description
 def do_status(role, current_user, parts=None):
-    """Display system status with exact table formatting"""
     if role == "viewer":
         print("Access denied. Viewer role cannot view system status.")
         return
@@ -148,8 +148,8 @@ def show_professional_status(role, current_user, show_section="all"):
     if show_section in ["all", "security"]:
         show_security_table(records)
 
+#Note : DeepSeek Ai Help me to create this table . remember i dont use Ai for all this section
 def show_resource_table(memory, cpu_percent, disk):
-    """جدول منابع سیستم"""
     print("\n+-------------------+---------------------+-------------------+")
     print("| RESOURCE          | USAGE               | DETAILS           |")
     print("+-------------------+---------------------+-------------------+")
@@ -907,7 +907,6 @@ def repl(role, user):
                     new_username = args.get('new_username')
                     auto_confirm = args.get('auto_confirm', False)
                 else:
-                    # حالت interactive
                     username = safe_input("Username to edit: ")
                     if username == "CANCEL": continue
                     
@@ -1251,7 +1250,6 @@ def repl(role, user):
             continue
 
 def do_help(role):
-    """Show help with command sorting"""
     rows = []
     for cmd, info in COMMANDS.items():
         if role in info["roles"]:
@@ -1262,7 +1260,6 @@ def do_help(role):
     print(tabulate(rows, headers=["Command","Description"]))
 
 def do_advanced_logs(role, current_user):
-    """Advanced log viewing with filters"""
     if role not in ["root", "admin"]:
         print("Access denied. Only root and admin can view logs.")
         return
@@ -1312,7 +1309,6 @@ def do_advanced_logs(role, current_user):
         print(f"Error reading logs: {e}")
 
 def do_edit(role, current_user):
-    """Edit existing record"""
     if role not in ["root", "admin"]:
         print("Access denied. Only root and admin can edit records.")
         return
@@ -1407,7 +1403,6 @@ def do_edit(role, current_user):
     print("Record updated successfully.")
 
 def do_delete_direct(role, current_user, record_id):
-    """Delete record directly by ID"""
     if role not in ["root", "admin"]:
         print("Access denied. Only root and admin can delete records.")
         return
@@ -1454,7 +1449,6 @@ def do_delete_direct(role, current_user, record_id):
     print(f"Record {record_id} deleted successfully.")
 
 def do_delete(role, current_user):
-    """Interactive record deletion"""
     if role not in ["root", "admin"]:
         print("Access denied. Only root and admin can delete records.")
         return
@@ -1510,7 +1504,6 @@ def do_delete(role, current_user):
     print("Record deleted successfully.")
 
 def do_useradd(role, current_user, username, password, user_role, auto_confirm=False):
-    """Add new user - COMPLETE VERSION"""
     if role != "root":
         print("Access denied. Only root can add users.")
         return
@@ -1548,7 +1541,6 @@ def do_useradd(role, current_user, username, password, user_role, auto_confirm=F
     print(f"User {username} added successfully.")
 
 def do_userdel(role, current_user, username, auto_confirm=False):
-    """Delete user - COMPLETE VERSION"""
     if role != "root":
         print("Access denied. Only root can delete users.")
         return
@@ -1592,7 +1584,6 @@ def do_userdel(role, current_user, username, auto_confirm=False):
     print(f"User {username} deleted successfully.")
 
 def do_usermod(role, current_user, username, new_role, auto_confirm=False):
-    """Modify user role - COMPLETE VERSION"""
     if role != "root":
         print("Access denied. Only root can modify users.")
         return
@@ -1628,7 +1619,6 @@ def do_usermod(role, current_user, username, new_role, auto_confirm=False):
     print(f"User {username} role changed to {new_role}.")
 
 def do_useredit(role, current_user, username, new_password=None, new_username=None, auto_confirm=False):
-    """Edit user username or password"""
     if role != "root":
         print("Access denied. Only root can edit users.")
         return
@@ -1667,8 +1657,7 @@ def do_useredit(role, current_user, username, new_password=None, new_username=No
     except KeyboardInterrupt:
         print("\nUser edit cancelled")
         return
-    
-    # تغییر username
+
     if new_username and new_username.strip():
         if new_username in users:
             print(f"Error: Username {new_username} already exists.")
@@ -1677,12 +1666,11 @@ def do_useredit(role, current_user, username, new_password=None, new_username=No
         users[new_username] = users[username]
         users[new_username]['username'] = new_username
         del users[username]
-        username = new_username  # برای تغییرات بعدی
+        username = new_username  
         print(f"Username changed to {new_username}")
     
-    # تغییر password (بدون نیاز به پسورد قدیمی)
     if new_password and new_password.strip():
-        # hash new password
+
         new_hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
         users[username]["password"] = new_hashed
         print("Password changed successfully")
@@ -1692,7 +1680,6 @@ def do_useredit(role, current_user, username, new_password=None, new_username=No
     print(f"User {username} updated successfully.")
 
 def do_userlist(role, current_user):
-    """List all system users - COMPLETE VERSION"""
     if role not in ["root", "admin"]:
         print("Access denied. Only root and admin can view user list.")
         return
@@ -1741,7 +1728,6 @@ def do_userlist(role, current_user):
         print(f"  {role}: {count} user(s)")
 
 def do_lists(role, current_user):
-    """List all records with pagination, sorting, and in-place actions - COMPLETE VERSION"""
     try:
         loading_operation("LOADING RECORDS", 1.0)
     except KeyboardInterrupt:

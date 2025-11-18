@@ -14,7 +14,6 @@ class AdvancedProgressBar:
         self.current = 0
         self.start_time = time.time()
         
-        # استایل‌های مختلف
         self.styles = {
             'modern': '█',
             'classic': '=',
@@ -30,7 +29,6 @@ class AdvancedProgressBar:
         self.current = progress
         percent = ("{0:.1f}").format(100 * (progress / float(self.total)))
         
-        # محاسبه زمان باقی‌مانده
         elapsed_time = time.time() - self.start_time
         if progress > 0:
             eta = (elapsed_time / progress) * (self.total - progress)
@@ -41,7 +39,6 @@ class AdvancedProgressBar:
         filled_length = int(self.length * progress // self.total)
         bar = self.fill * filled_length + ' ' * (self.length - filled_length)
         
-        # چاپ با فرمت‌بندی زیبا
         if self.style == 'modern':
             line = f'\r{self.prefix} |{bar}| {percent}% | {self.suffix} | {eta_str}'
         else:
@@ -62,7 +59,6 @@ class AdvancedProgressBar:
 
 
 def simple_loading(operation_name, duration=1.0):
-    """لودینگ ساده بدون پیام موفقیت"""
     bar = AdvancedProgressBar(total=100, prefix=operation_name, suffix='Processing', length=25, style='modern')
     steps = 100
     delay = duration / steps
@@ -71,12 +67,10 @@ def simple_loading(operation_name, duration=1.0):
         time.sleep(delay)
         bar.update(i + 1)
     
-    # فقط خط رو پاک کن، پیام موفقیت نده
     sys.stdout.write('\r' + ' ' * 80 + '\r')
     sys.stdout.flush()
 
 def animated_login():
-    """انیمیشن لاگین پیشرفته"""
     print("\nInitializing secure session...")
     
     steps = [
@@ -98,7 +92,6 @@ def animated_login():
     bar.finish_with_message("Authentication successful")
 
 def loading_operation(operation_name, duration=1.0, style='modern'):
-    """لودینگ پیشرفته برای عملیات‌های مختلف"""
     bar = AdvancedProgressBar(total=100, prefix=operation_name, suffix='Processing', length=25, style=style)
     steps = 100
     delay = duration / steps
@@ -106,7 +99,6 @@ def loading_operation(operation_name, duration=1.0, style='modern'):
     for i in range(steps):
         time.sleep(delay)
         
-        # تغییر سافیکس برای ایجاد حس پیشرفت
         if i < 25:
             bar.suffix = 'Initializing'
         elif i < 50:
@@ -121,7 +113,6 @@ def loading_operation(operation_name, duration=1.0, style='modern'):
     bar.finish_with_message(f"{operation_name} completed")
 
 def searching_animation(duration=1.0):
-    """انیمیشن مخصوص جستجو"""
     bar = AdvancedProgressBar(total=100, prefix='SEARCH', suffix='Scanning database', length=25, style='dots')
     steps = 100
     delay = duration / steps
@@ -131,7 +122,6 @@ def searching_animation(duration=1.0):
     for i in range(steps):
         time.sleep(delay)
         
-        # تغییر سافیکس برای جستجو
         term_index = (i // 25) % len(search_terms)
         bar.suffix = search_terms[term_index]
             
@@ -140,7 +130,6 @@ def searching_animation(duration=1.0):
     bar.finish_with_message("Search completed")
 
 def saving_animation(duration=1.0):
-    """انیمیشن مخصوص ذخیره‌سازی"""
     bar = AdvancedProgressBar(total=100, prefix='SAVE', suffix='Encrypting data', length=25, style='blocks')
     steps = 100
     delay = duration / steps
@@ -158,7 +147,6 @@ def saving_animation(duration=1.0):
     bar.finish_with_message("Data saved successfully")
 
 def backup_animation(duration=2.0):
-    """انیمیشن مخصوص بک‌آپ"""
     bar = AdvancedProgressBar(total=100, prefix='BACKUP', suffix='Creating snapshot', length=25, style='modern')
     steps = 100
     delay = duration / steps
@@ -182,7 +170,6 @@ def backup_animation(duration=2.0):
     bar.finish_with_message("Backup created successfully")
 
 def report_generation_animation(duration=1.5):
-    """انیمیشن مخصوص تولید گزارش"""
     bar = AdvancedProgressBar(total=100, prefix='REPORT', suffix='Compiling data', length=25, style='arrows')
     steps = 100
     delay = duration / steps
@@ -205,9 +192,7 @@ def report_generation_animation(duration=1.5):
     
     bar.finish_with_message("Report generated successfully")
 
-# انیمیشن‌های خاص برای دستورات مختلف
 def get_animation_for_command(command, duration=1.0):
-    """دریافت انیمیشن مناسب برای هر دستور"""
     animations = {
         'add': lambda: saving_animation(duration),
         'search': lambda: searching_animation(duration),

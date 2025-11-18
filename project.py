@@ -5,7 +5,6 @@ import subprocess
 import importlib
 
 def check_and_install_dependencies():
-    """بررسی و نصب dependencies قبل از import کردن anything"""
     requirements_file = os.path.join(os.path.dirname(__file__), 'requirements.txt')
     
     if not os.path.exists(requirements_file):

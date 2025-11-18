@@ -1,4 +1,3 @@
-# core/analytics.py
 from core.database import load_records
 from core.auth import load_users
 from core.config_manager import get_autobackup_config
@@ -8,11 +7,9 @@ import os
 import json
 
 class Analytics:
-    """سیستم آنالیتیکس پیشرفته"""
     
     @staticmethod
     def user_activity_report():
-        """گزارش فعالیت کاربران"""
         users = load_users()
         records = load_records()
         
@@ -23,7 +20,6 @@ class Analytics:
             "recent_activity": "Coming soon"
         }
         
-        # آنالیز بر اساس نقش
         for user_data in users.values():
             role = user_data.get('role', 'viewer')
             report["users_by_role"][role] = report["users_by_role"].get(role, 0) + 1
@@ -32,7 +28,6 @@ class Analytics:
     
     @staticmethod
     def data_quality_report():
-        """گزارش کیفیت داده‌ها"""
         records = load_records()
         
         if not records:
@@ -44,14 +39,12 @@ class Analytics:
             "validity": {}
         }
         
-        # آنالیز کامل بودن داده‌ها
         fields_to_check = ['first_name', 'last_name', 'national_id', 'phone', 'address']
         for field in fields_to_check:
             filled_count = sum(1 for record in records if record.get(field))
             percentage = (filled_count / len(records)) * 100
             report["completeness"][field] = f"{percentage:.1f}% ({filled_count}/{len(records)})"
         
-        # آنالیز اعتبار داده‌ها
         from core.validators import DataValidator
         
         valid_national_ids = 0
@@ -75,15 +68,12 @@ class Analytics:
     
     @staticmethod
     def system_status_report():
-        """گزارش وضعیت سیستم"""
         records = load_records()
         backup_config = get_autobackup_config()
         
-        # محاسبه حجم فایل‌ها
         records_size = os.path.getsize(os.path.join(os.path.dirname(__file__), '..', 'data', 'records.enc')) if os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'data', 'records.enc')) else 0
         logs_size = os.path.getsize(LOG_PATH) if os.path.exists(LOG_PATH) else 0
         
-        # محاسبه حجم بک‌آپ‌ها
         backup_size = 0
         if os.path.exists(BACKUP_DIR):
             for file in os.listdir(BACKUP_DIR):
@@ -107,17 +97,14 @@ class Analytics:
     
     @staticmethod
     def security_report():
-        """گزارش امنیتی"""
-        # خواندن لاگ‌ها برای تحلیل امنیتی
         log_entries = []
         if os.path.exists(LOG_PATH):
             try:
                 with open(LOG_PATH, 'r', encoding='utf-8') as f:
-                    log_entries = f.readlines()[-100:]  # آخرین ۱۰۰ خط
+                    log_entries = f.readlines()[-100:] 
             except:
                 log_entries = []
         
-        # تحلیل لاگ‌ها
         failed_logins = 0
         security_events = 0
         
@@ -136,7 +123,7 @@ class Analytics:
             "recommendations": []
         }
         
-        # توصیه‌های امنیتی
+
         if failed_logins > 5:
             report["recommendations"].append("High number of failed login attempts detected")
         

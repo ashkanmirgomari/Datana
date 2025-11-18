@@ -1,4 +1,3 @@
-# core/boot.py
 import os
 import sys
 import time
@@ -71,7 +70,7 @@ class BootManager:
         print("[*] Datana v1.1.0.3 - Booting...")
         time.sleep(1)
         
-        # مرحله ۱: بررسی سیستم
+
         checks = [
             ("Checking Python environment", BootManager.check_python),
             ("Verifying system directories", BootManager.check_directories),
@@ -88,8 +87,7 @@ class BootManager:
             status = "✓" if success else "✗"
             print(f"[{'+' if success else '-'}] {check_name}... {message} {status}")
             
-            # تایم‌دلی بین چک‌ها
-            if i % 2 == 1:  # بعد از هر دو خط
+            if i % 2 == 1: 
                 time.sleep(1)
             
             if not success:
@@ -101,7 +99,6 @@ class BootManager:
         
         time.sleep(1)
         
-        # مرحله ۲: لود ماژول‌ها
         print("\n[*] Loading core modules...")
         time.sleep(1)
         
@@ -121,7 +118,6 @@ class BootManager:
         
         time.sleep(1)
         
-        # مرحله ۳: شروع سشن
         print("\n[*] Starting secure session...")
         time.sleep(1)
         print("[+] Session initialized ✓")
@@ -129,7 +125,6 @@ class BootManager:
         print("[+] Authentication system ready ✓")
         time.sleep(1)
         
-        # نمایش بنر
         print("\n")
         print("██████╗  █████╗ ████████╗ █████╗ ███╗   ██╗ █████╗ ")
         print("██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗████╗  ██║██╔══██╗")

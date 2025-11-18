@@ -1,4 +1,3 @@
-# core/config.py
 import json, os
 from core.utils import DATA_DIR
 
