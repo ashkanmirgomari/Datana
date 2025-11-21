@@ -177,9 +177,7 @@ class DataValidator:
             '920', '921', '922', '923', 
             '901', '902', '903', '904', '905', '941' 
         }
-        
-        if prefix not in valid_prefixes:
-            return False, "Invalid mobile operator prefix"
+    
         
 
         suspicious_numbers = {
