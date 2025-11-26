@@ -1,7 +1,3 @@
-# Datana CS50 Final Project
-#### Video Demo: https://youtu.be/ne2sHOTRlQw
-#### Description: CS50P final project 2025 , Datana and how datana works
-
 # 🛡️ Datana - mini-Local Database
 
 **Enterprise-grade secure data management with military-level encryption**
