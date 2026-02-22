@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Backup{% endblock %}
+
+{% block page_title %}Backup & Restore{% endblock %}
+{% block page_description %}Manage system backups and restoration.{% endblock %}
+
+{% block content %}
+<!-- Auto-backup Status -->
+<div class="stats-grid" style="margin-bottom: 1.5rem;">
+    <div class="stat-card">
+        <div class="stat-title">Auto-backup Status</div>
+        <div class="stat-value">{{ backup_status.status }}</div>
+        <div class="stat-change">Mode: {{ backup_status.mode }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Last Backup</div>
+        <div class="stat-value">{{ backup_status.last_backup }}</div>
+        <div class="stat-change">Next: {{ backup_status.next_backup }}</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+    <!-- Backup Actions -->
+    <div class="form-container">
+        <h3 style="margin-bottom: 1.5rem;">Backup Actions</h3>
+        
+        <form method="POST" style="margin-bottom: 1rem;">
+            <input type="hidden" name="action" value="create">
+            <button type="submit" class="btn" style="width: 100%;">Create Backup Now</button>
+        </form>
+        
+        <form method="POST">
+            <input type="hidden" name="action" value="restore">
+            <div class="form-group">
+                <label for="backup_file">Restore from Backup</label>
+                <select id="backup_file" name="backup_file">
+                    <option value="">Select backup...</option>
+                    {% for backup in backups %}
+                    <option value="{{ backup.filename }}">{{ backup.filename }} ({{ backup.created.strftime('%Y-%m-%d %H:%M') }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-secondary" style="width: 100%;" onclick="return confirm('Are you sure? Current data will be backed up automatically.');">Restore</button>
+        </form>
+    </div>
+    
+    <!-- Available Backups -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Available Backups</h2>
+            <span class="badge">{{ backups|length }}</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Created</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for backup in backups %}
+                <tr>
+                    <td>{{ backup.filename }}</td>
+                    <td>{{ backup.created.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ (backup.size / 1024)|round(1) }} KB</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #94a3b8;">No backups found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

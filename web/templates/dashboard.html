@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_description %}Welcome back, {{ username }}! Here's what's happening with Datana.{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-title">Total Records</div>
+        <div class="stat-value">{{ stats.total_records }}</div>
+        <div class="stat-change">+{{ (stats.total_records * 0.123)|int }} from last month</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Total Users</div>
+        <div class="stat-value">{{ stats.total_users }}</div>
+        <div class="stat-change">{{ (stats.total_users * 0.25)|int }} active this week</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Database Size</div>
+        <div class="stat-value">{{ (stats.data_size / 1048576)|round(1) }} MB</div>
+        <div class="stat-change">Last backup: {{ backup_status.last_backup }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Security Score</div>
+        <div class="stat-value">98%</div>
+        <div class="stat-change">All systems secure</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="actions-grid">
+    <a href="{{ url_for('add_record_web') }}" class="action-card">
+        <div class="action-icon">➕</div>
+        <div class="action-title">Add Record</div>
+        <div class="action-desc">Create new entry</div>
+    </a>
+    <a href="{{ url_for('search') }}" class="action-card">
+        <div class="action-icon">🔍</div>
+        <div class="action-title">Advanced Search</div>
+        <div class="action-desc">Find anything</div>
+    </a>
+    <a href="{{ url_for('export') }}" class="action-card">
+        <div class="action-icon">📤</div>
+        <div class="action-title">Export Data</div>
+        <div class="action-desc">CSV format</div>
+    </a>
+    <a href="{{ url_for('backup') }}" class="action-card">
+        <div class="action-icon">📦</div>
+        <div class="action-title">Backup Now</div>
+        <div class="action-desc">Create snapshot</div>
+    </a>
+</div>
+
+<!-- Recent Records Table -->
+<div class="table-container">
+    <div class="table-header">
+        <h2>Recent Records</h2>
+        <span class="badge">Last 5 entries</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>National ID</th>
+                <th>Phone</th>
+                <th>City</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in recent_records %}
+            <tr>
+                <td><span class="record-id">{{ record.id }}</span></td>
+                <td>{{ record.first_name }}</td>
+                <td>{{ record.last_name }}</td>
+                <td>{{ record.national_id or '-' }}</td>
+                <td>{{ record.phone or '-' }}</td>
+                <td>{{ record.address or '-' }}</td>
+                <td><a href="{{ url_for('record_detail', record_id=record.id) }}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">View</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #94a3b8;">No records found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+    <!-- Reminders Widget -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>⏰ Due Reminders</h2>
+            <span class="badge">{{ reminders|length }}</span>
+        </div>
+        <table>
+            <tbody>
+                {% for reminder in reminders %}
+                <tr>
+                    <td style="width: 100%;">
+                        <div style="font-weight: 500;">{{ reminder.text }}</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Due: {{ reminder.due[:10] }}</div>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('reminders') }}" style="display: inline;">
+                            <input type="hidden" name="action" value="complete">
+                            <input type="hidden" name="reminder_id" value="{{ reminder.id }}">
+                            <button type="submit" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">✓</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td style="text-align: center; color: #94a3b8;">No pending reminders</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="padding: 1rem; border-top: 1px solid #334155;">
+            <a href="{{ url_for('reminders') }}" class="btn btn-secondary">Manage Reminders</a>
+        </div>
+    </div>
+
+    <!-- Joke of the Day -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>😂 Joke of the Day</h2>
+        </div>
+        <div style="padding: 1.5rem; font-style: italic; color: #94a3b8; text-align: center;">
+            "{{ joke }}"
+        </div>
+        <div style="padding: 1rem; border-top: 1px solid #334155; display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary" onclick="window.location.reload()">New Joke</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

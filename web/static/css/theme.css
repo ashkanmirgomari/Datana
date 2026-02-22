@@ -1,0 +1,95 @@
+/* web/static/css/theme.css - نسخه نهایی و پایدار */
+
+/* Theme variables - DARK MODE (پیش‌فرض) */
+:root {
+    /* Colors */
+    --primary: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --primary-soft: rgba(139, 92, 246, 0.2);
+    --secondary: #3b82f6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --danger: #dc2626;
+    
+    /* Background */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #2d3a4f;
+    --border: #334155;
+    
+    /* Glassmorphism */
+    --glass-bg: rgba(30, 41, 59, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+    --glass-blur: blur(10px);
+    
+    /* Text */
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    /* Effects */
+    --card-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
+    --glow: 0 0 20px rgba(139, 92, 246, 0.3);
+    --transition: all 0.2s ease;
+    /* Neon colors - قوی‌تر */
+    --neon-primary: 0 0 20px var(--primary),
+                    0 0 40px var(--primary),
+                    0 0 60px var(--primary),
+                    0 0 80px var(--primary);
+    
+    --neon-secondary: 0 0 20px var(--secondary),
+                      0 0 40px var(--secondary),
+                      0 0 60px var(--secondary),
+                      0 0 80px var(--secondary);
+    
+    --neon-success: 0 0 20px var(--success),
+                    0 0 40px var(--success),
+                    0 0 60px var(--success),
+                    0 0 80px var(--success);
+    
+    --neon-warning: 0 0 20px var(--warning),
+                    0 0 40px var(--warning),
+                    0 0 60px var(--warning),
+                    0 0 80px var(--warning);
+    
+    --neon-error: 0 0 20px var(--error),
+                  0 0 40px var(--error),
+                  0 0 60px var(--error),
+                  0 0 80px var(--error);
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f1f5f9;
+    --border: #e2e8f0;
+    
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth transitions */
+* {
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+}

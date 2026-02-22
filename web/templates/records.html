@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Records{% endblock %}
+
+{% block page_title %}Records Management{% endblock %}
+{% block page_description %}View and manage all records in the database.{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-title">Total Records</div>
+        <div class="stat-value">{{ stats.total_records }}</div>
+        <div class="stat-change">Total in database</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">With Phone</div>
+        <div class="stat-value">{{ stats.records_with_phone }}</div>
+        <div class="stat-change">{{ (stats.records_with_phone / stats.total_records * 100)|round(1) if stats.total_records > 0 else 0 }}% of records</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">With National ID</div>
+        <div class="stat-value">{{ stats.records_with_national_id }}</div>
+        <div class="stat-change">{{ (stats.records_with_national_id / stats.total_records * 100)|round(1) if stats.total_records > 0 else 0 }}% of records</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Data Size</div>
+        <div class="stat-value">{{ (stats.data_size / 1024)|round(1) }} KB</div>
+        <div class="stat-change">Last backup: {{ stats.last_backup[:10] if stats.last_backup != 'No backups found' else 'Never' }}</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="actions-grid">
+    <a href="{{ url_for('add_record_web') }}" class="action-card">
+        <div class="action-icon">+</div>
+        <div class="action-title">Add New Record</div>
+        <div class="action-desc">Create a new entry</div>
+    </a>
+    <a href="{{ url_for('search') }}" class="action-card">
+        <div class="action-icon">🔍</div>
+        <div class="action-title">Advanced Search</div>
+        <div class="action-desc">Find specific records</div>
+    </a>
+    <a href="{{ url_for('export') }}" class="action-card">
+        <div class="action-icon">📤</div>
+        <div class="action-title">Export Data</div>
+        <div class="action-desc">Export to CSV format</div>
+    </a>
+    <a href="{{ url_for('dashboard') }}" class="action-card">
+        <div class="action-icon">📊</div>
+        <div class="action-title">Dashboard</div>
+        <div class="action-desc">Back to dashboard</div>
+    </a>
+</div>
+
+<!-- Records Table -->
+<div class="table-container">
+    <div class="table-header">
+        <div>
+            <h2>All Records</h2>
+            <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 0.25rem;">Page {{ page }} of {{ total_pages }}</p>
+        </div>
+        <span class="badge">Total: {{ total }}</span>
+    </div>
+    
+    {% if records %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>National ID</th>
+                <th>Phone</th>
+                <th>City</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td><span class="record-id">{{ record.id }}</span></td>
+                <td>{{ record.first_name }}</td>
+                <td>{{ record.last_name }}</td>
+                <td>{{ record.national_id if record.national_id else '-' }}</td>
+                <td>{{ record.phone if record.phone else '-' }}</td>
+                <td>{{ record.address if record.address else '-' }}</td>
+                <td>{{ record.created_at[:10] if record.created_at else '-' }}</td>
+                <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ url_for('record_detail', record_id=record.id) }}" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">View</a>
+                        {% if role in ['root', 'admin'] %}
+                        <form method="POST" action="{{ url_for('delete_record', record_id=record.id) }}" style="display: inline;" onsubmit="return confirm('Delete this record?');">
+                            <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.75rem;">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div style="padding: 1.5rem; border-top: 1px solid #334155;">
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('records', page=page-1) }}">←</a>
+            {% endif %}
+            
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                <a href="#" class="active">{{ p }}</a>
+                {% elif p >= page-2 and p <= page+2 %}
+                <a href="{{ url_for('records', page=p) }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page < total_pages %}
+            <a href="{{ url_for('records', page=page+1) }}">→</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div style="padding: 4rem; text-align: center;">
+        <h3 style="color: #e2e8f0; margin-bottom: 0.5rem;">No Records Found</h3>
+        <p style="color: #94a3b8; margin-bottom: 1.5rem;">Add your first record to get started.</p>
+        <a href="{{ url_for('add_record_web') }}" class="btn">Add Record</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Export Button -->
+<div style="margin-top: 1.5rem; text-align: right;">
+    <a href="{{ url_for('export') }}" class="btn btn-secondary">Export All Records</a>
+</div>
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block page_title %}Analytics Reports{% endblock %}
+{% block page_description %}View system analytics and reports.{% endblock %}
+
+{% block content %}
+<!-- Report Type Selector -->
+<div class="actions-grid" style="margin-bottom: 2rem;">
+    <a href="{{ url_for('reports', type='user') }}" class="action-card {% if report_type == 'user' %}active{% endif %}">
+        <div class="action-icon">👥</div>
+        <div class="action-title">User Activity</div>
+        <div class="action-desc">User statistics</div>
+    </a>
+    <a href="{{ url_for('reports', type='data') }}" class="action-card {% if report_type == 'data' %}active{% endif %}">
+        <div class="action-icon">📊</div>
+        <div class="action-title">Data Quality</div>
+        <div class="action-desc">Data completeness</div>
+    </a>
+    <a href="{{ url_for('reports', type='system') }}" class="action-card {% if report_type == 'system' %}active{% endif %}">
+        <div class="action-icon">⚙️</div>
+        <div class="action-title">System Status</div>
+        <div class="action-desc">Storage & backup</div>
+    </a>
+    <a href="{{ url_for('reports', type='security') }}" class="action-card {% if report_type == 'security' %}active{% endif %}">
+        <div class="action-icon">🛡️</div>
+        <div class="action-title">Security</div>
+        <div class="action-desc">Security events</div>
+    </a>
+</div>
+
+<!-- Report Content -->
+<div class="table-container">
+    <div class="table-header">
+        <h2>
+            {% if report_type == 'user' %}User Activity Report
+            {% elif report_type == 'data' %}Data Quality Report
+            {% elif report_type == 'system' %}System Status Report
+            {% elif report_type == 'security' %}Security Report
+            {% endif %}
+        </h2>
+    </div>
+    <div style="padding: 1.5rem;">
+        {% if report_type == 'user' %}
+            <div style="display: grid; gap: 2rem;">
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Overview</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="stat-card">
+                            <div class="stat-title">Total Users</div>
+                            <div class="stat-value">{{ report.total_users }}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Total Records</div>
+                            <div class="stat-value">{{ report.total_records }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Users by Role</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for role, count in report.users_by_role.items() %}
+                            <tr>
+                                <td>{{ role }}</td>
+                                <td>{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+        {% elif report_type == 'data' %}
+            <div style="display: grid; gap: 2rem;">
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Data Completeness</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Completeness</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for field, value in report.completeness.items() %}
+                            <tr>
+                                <td>{{ field }}</td>
+                                <td>{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Data Validity</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Check</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>National IDs</td>
+                                <td>{{ report.validity.national_ids }}</td>
+                            </tr>
+                            <tr>
+                                <td>Phones</td>
+                                <td>{{ report.validity.phones }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+        {% elif report_type == 'system' %}
+            <div style="display: grid; gap: 2rem;">
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Storage Usage</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item, usage in report.storage_usage.items() %}
+                            <tr>
+                                <td>{{ item }}</td>
+                                <td>{{ usage }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Auto-backup Status</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key, value in report.autobackup.items() %}
+                            <tr>
+                                <td>{{ key }}</td>
+                                <td>{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+        {% elif report_type == 'security' %}
+            <div style="display: grid; gap: 2rem;">
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Recent Activity</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Activity</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity, count in report.recent_activity.items() %}
+                            <tr>
+                                <td>{{ activity }}</td>
+                                <td>{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if report.recommendations %}
+                <div>
+                    <h3 style="color: #94a3b8; margin-bottom: 1rem;">Recommendations</h3>
+                    <ul style="list-style-type: none; padding: 0;">
+                        {% for rec in report.recommendations %}
+                        <li style="padding: 0.5rem; background: #0f172a; border-radius: 0.5rem; margin-bottom: 0.5rem;">⚠️ {{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

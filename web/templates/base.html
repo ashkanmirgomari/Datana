@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datana - {% block title %}Dashboard{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="app">
+        <!-- سایدبار - فقط وقتی کاربر لاگین کرده -->
+        {% if session.username %}
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-database"></i>
+                <span class="logo-text">DATANA</span>
+                <span class="logo-version">{{ version }}</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="{{ url_for('records') }}" class="nav-item {% if request.endpoint == 'records' %}active{% endif %}">
+                    <i class="fas fa-table"></i>
+                    <span>Records</span>
+                </a>
+                
+                <a href="{{ url_for('add_record_web') }}" class="nav-item {% if request.endpoint == 'add_record_web' %}active{% endif %}">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Record</span>
+                </a>
+                
+                <a href="{{ url_for('search') }}" class="nav-item {% if request.endpoint == 'search' %}active{% endif %}">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                
+                <a href="{{ url_for('profile') }}" class="nav-item {% if request.endpoint == 'profile' %}active{% endif %}">
+                    <i class="fas fa-user-astronaut"></i>
+                    <span>Profile</span>
+                </a>
+                
+                <a href="{{ url_for('leaderboard_page') }}" class="nav-item {% if request.endpoint == 'leaderboard_page' %}active{% endif %}">
+                    <i class="fas fa-crown"></i>
+                    <span>Leaderboard</span>
+                </a>
+                
+                <a href="{{ url_for('reports') }}" class="nav-item {% if request.endpoint == 'reports' %}active{% endif %}">
+                    <i class="fas fa-chart-simple"></i>
+                    <span>Reports</span>
+                </a>
+                
+                <a href="{{ url_for('backup') }}" class="nav-item {% if request.endpoint == 'backup' %}active{% endif %}">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>Backup</span>
+                </a>
+                
+                <a href="{{ url_for('export') }}" class="nav-item {% if request.endpoint == 'export' %}active{% endif %}">
+                    <i class="fas fa-file-export"></i>
+                    <span>Export</span>
+                </a>
+                
+                <a href="{{ url_for('monitoring_page') }}" class="nav-item {% if request.endpoint == 'monitoring_page' %}active{% endif %}">
+                    <i class="fas fa-heart-pulse"></i>
+                    <span>Monitoring</span>
+                </a>
+                
+                <a href="{{ url_for('reminders') }}" class="nav-item {% if request.endpoint == 'reminders' %}active{% endif %}">
+                    <i class="fas fa-bell"></i>
+                    <span>Reminders</span>
+                </a>
+                
+                <div class="nav-separator"></div>
+                
+                <a href="{{ url_for('logout') }}" class="nav-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-user">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">{{ session.username }}</div>
+                    <div class="user-role">{{ session.role }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Main Content -->
+        <div class="main" {% if not session.username %}style="margin-left: 0;"{% endif %}>
+            <!-- Header -->
+            <div class="header">
+                <div class="page-title">
+                    <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                    <p class="page-description">{% block page_description %}{% if session.username %}Welcome back, {{ session.username }}!{% endif %}{% endblock %}</p>
+                </div>
+                
+                {% if session.username %}
+                <div class="user-menu">
+                    <button class="theme-toggle" id="themeToggle" onclick="ThemeManager.toggleTheme()">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    
+                    <div class="user-dropdown">
+                        <button class="user-button">
+                            <i class="fas fa-user-circle"></i>
+                            <span>{{ session.username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{{ url_for('profile') }}">
+                                <i class="fas fa-user"></i>
+                                Profile
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">
+                                <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                                <span>{{ message }}</span>
+                                <button class="flash-close" onclick="this.parentElement.remove()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Content -->
+            <div class="content-wrapper">
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-left">
+                    <i class="fas fa-copyright"></i>
+                    <span> {{ version }} - Mini Local Database</span>
+                </div>
+                <div class="footer-right">
+                    <i class="fas fa-heart" style="color: var(--error);"></i>
+                    <span>Ashkan Mirgomari 2026</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== LOADING OVERLAYS ========== -->
+    
+    <!-- لودینگ سراسری (برای تغییر صفحه) -->
+    <div id="global-loader" class="page-loading" style="display: none;">
+        <div class="loading-spinner-lg"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+    
+    <!-- لودینگ برای عملیات (نمایش داده میشه با کلاس) -->
+    <div id="action-loader" class="action-loading" style="display: none;">
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p id="action-message">Processing...</p>
+        </div>
+    </div>
+
+    <!-- ========== SKELETON LOADING TEMPLATES ========== -->
+    
+    <!-- تمپلیت اسکلتون برای کارت‌ها -->
+    <template id="skeleton-cards">
+        <div class="cards-loading">
+            <div class="skeleton-card">
+                <div class="skeleton-text-sm"></div>
+                <div class="skeleton-text-lg"></div>
+                <div class="skeleton-text-sm" style="width: 40%;"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-text-sm"></div>
+                <div class="skeleton-text-lg"></div>
+                <div class="skeleton-text-sm" style="width: 40%;"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-text-sm"></div>
+                <div class="skeleton-text-lg"></div>
+                <div class="skeleton-text-sm" style="width: 40%;"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-text-sm"></div>
+                <div class="skeleton-text-lg"></div>
+                <div class="skeleton-text-sm" style="width: 40%;"></div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- تمپلیت اسکلتون برای جدول -->
+    <template id="skeleton-table">
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Loading...</h2>
+            </div>
+            <div class="table-loading">
+                {% for i in range(5) %}
+                <div class="skeleton-row">
+                    <div class="skeleton-cell"></div>
+                    <div class="skeleton-cell"></div>
+                    <div class="skeleton-cell"></div>
+                    <div class="skeleton-cell"></div>
+                    <div class="skeleton-cell"></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </template>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+    <script>
+        // ========== LOADER MANAGER ==========
+        const Loader = {
+            // نمایش لودینگ سراسری
+            showGlobal: function(message = 'Loading...') {
+                const loader = document.getElementById('global-loader');
+                const text = loader.querySelector('.loading-text');
+                if (text) text.textContent = message;
+                loader.style.display = 'flex';
+            },
+            
+            // پنهان کردن لودینگ سراسری
+            hideGlobal: function() {
+                document.getElementById('global-loader').style.display = 'none';
+            },
+            
+            // نمایش لودینگ عملیات
+            showAction: function(message = 'Processing...') {
+                const loader = document.getElementById('action-loader');
+                const msgEl = document.getElementById('action-message');
+                if (msgEl) msgEl.textContent = message;
+                loader.style.display = 'block';
+            },
+            
+            // پنهان کردن لودینگ عملیات
+            hideAction: function() {
+                document.getElementById('action-loader').style.display = 'none';
+            },
+            
+            // نمایش اسکلتون در یک المنت
+            showSkeleton: function(containerId, type = 'cards') {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                const template = document.getElementById(`skeleton-${type}`);
+                if (!template) return;
+                
+                // پنهان کردن محتوای اصلی
+                container.querySelectorAll('.content').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // نمایش اسکلتون
+                const skeleton = template.content.cloneNode(true);
+                container.prepend(skeleton);
+            },
+            
+            // پنهان کردن اسکلتون
+            hideSkeleton: function(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                
+                // حذف اسکلتون‌ها
+                container.querySelectorAll('.cards-loading, .table-container.loading').forEach(el => {
+                    el.remove();
+                });
+                
+                // نمایش محتوای اصلی
+                container.querySelectorAll('.content').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
+        };
+        
+        // ========== USER DROPDOWN ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            const userButton = document.querySelector('.user-button');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            
+            if (userButton && dropdownMenu) {
+                userButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('show');
+                });
+                
+                document.addEventListener('click', function() {
+                    dropdownMenu.classList.remove('show');
+                });
+            }
+            
+            // ========== FLASH MESSAGES AUTO-HIDE ==========
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 300);
+                }, 5000);
+            });
+            
+            // ========== PAGE TRANSITION LOADER ==========
+            // نمایش لودینگ هنگام کلیک روی لینک‌ها
+            document.querySelectorAll('a:not(.no-loader)').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // اگه لینک به صفحه دیگه باشه
+                    if (this.href && !this.href.includes('#') && !this.href.includes('javascript')) {
+                        Loader.showGlobal('Loading page...');
+                    }
+                });
+            });
+        });
+        
+        // ========== BUTTON LOADER ==========
+        // تابع برای اضافه کردن لودینگ به دکمه‌ها
+        function addButtonLoader(button, message = 'Processing') {
+            const originalText = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
+            
+            // تابع برای برگردوندن به حالت اول
+            return function() {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            };
+        }
+        
+        // ========== DELETE CONFIRMATION WITH LOADER ==========
+        async function deleteWithLoader(url, rowId, message = 'Deleting...') {
+            if (!confirm('Are you sure you want to delete this item?')) {
+                return;
+            }
+            
+            const row = document.getElementById(rowId);
+            if (row) {
+                row.style.opacity = '0.5';
+                row.style.pointerEvents = 'none';
+            }
+            
+            Loader.showAction(message);
+            
+            try {
+                // اینجا درخواست واقعی رو بزن
+                // const response = await fetch(url, { method: 'POST' });
+                
+                // شبیه‌سازی
+                setTimeout(() => {
+                    Loader.hideAction();
+                    if (row) row.remove();
+                    showNotification('Deleted successfully', 'success');
+                }, 1500);
+                
+            } catch (error) {
+                Loader.hideAction();
+                showNotification('Error deleting item', 'error');
+                if (row) {
+                    row.style.opacity = '1';
+                    row.style.pointerEvents = 'auto';
+                }
+            }
+        }
+        
+        // ========== NOTIFICATION SYSTEM ==========
+        function showNotification(message, type = 'info') {
+            const flashContainer = document.querySelector('.flash-messages') || document.createElement('div');
+            
+            if (!flashContainer.classList.contains('flash-messages')) {
+                flashContainer.className = 'flash-messages';
+                document.querySelector('.content-wrapper').prepend(flashContainer);
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = `flash-message flash-${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+                <button class="flash-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            flashContainer.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // ========== EXPOSE FUNCTIONS GLOBALLY ==========
+        window.Loader = Loader;
+        window.showNotification = showNotification;
+        window.deleteWithLoader = deleteWithLoader;
+        window.addButtonLoader = addButtonLoader;
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

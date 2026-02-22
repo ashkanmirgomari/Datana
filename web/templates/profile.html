@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block page_title %}User Profile{% endblock %}
+{% block page_description %}Your gamification stats and achievements{% endblock %}
+
+{% block extra_css %}
+<!-- لینک مستقیم با آدرس کامل -->
+<link rel="stylesheet" type="text/css" href="profile.css">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Profile Card -->
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>{{ username }}</h2>
+        </div>
+        <div class="profile-content">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-rank-name">{{ rank.name }}</div>
+            <div class="profile-rank-level">Level {{ rank.level }}</div>
+            
+            <div class="stats-box">
+                <div class="points-row">
+                    <span class="points-label">Total Points</span>
+                    <span class="points-value">{{ user_data.points }}</span>
+                </div>
+                
+                {% if progress and progress.next %}
+                <div class="rank-progress">
+                    <div class="rank-labels">
+                        <span>{{ rank.name }}</span>
+                        <span>{{ progress.next.name }}</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" data-width="{{ progress.progress|default(0) }}"></div>
+                    </div>
+                    <div class="points-needed">
+                        {{ progress.points_needed|default(0) }} points to next rank
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-title">Records</div>
+                    <div class="stat-value">{{ user_data.total_records }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">Streak</div>
+                    <div class="stat-value">{{ user_data.login_streak }}d</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Card -->
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>Activity Stats</h2>
+        </div>
+        <div class="profile-content">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-title">Backups</div>
+                    <div class="stat-value">{{ user_data.total_backups|default(0) }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">Searches</div>
+                    <div class="stat-value">{{ user_data.total_searches|default(0) }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">Exports</div>
+                    <div class="stat-value">{{ user_data.total_exports|default(0) }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-title">Member Since</div>
+                    <div class="stat-value">{{ user_data.first_seen[:4] }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Badges Section -->
+<div class="section-container">
+    <div class="section-header">
+        <h2>Badges</h2>
+        <span class="badge-count">{{ badges|length }}</span>
+    </div>
+    <div class="section-content">
+        {% if badges %}
+        <div class="badges-grid">
+            {% for badge in badges %}
+            <div class="badge-card">
+                <div class="badge-icon">{{ badge.icon }}</div>
+                <div class="badge-name">{{ badge.name }}</div>
+                <div class="badge-description">{{ badge.description }}</div>
+                <div class="badge-meta">+{{ badge.points }} pts • {{ badge.awarded_at[:10] }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            No badges yet. Start using Datana to earn badges!
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Daily Tasks -->
+<div class="section-container">
+    <div class="section-header">
+        <h2>Daily Tasks</h2>
+    </div>
+    <div class="section-content">
+        <div class="tasks-grid">
+            {% for task in daily_tasks %}
+            <div class="task-card {% if task.completed %}completed{% endif %}">
+                <div class="task-content">
+                    <div class="task-info">
+                        <div class="task-icon">{{ task.icon }}</div>
+                        <div class="task-name">{{ task.name }}</div>
+                        <div class="task-description">{{ task.description }}</div>
+                        <div class="task-points">+{{ task.points }} points</div>
+                    </div>
+                    {% if task.completed %}
+                    <div class="checkmark">✓</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="http://localhost:5000/static/js/profile.js"></script>
+{% endblock %}

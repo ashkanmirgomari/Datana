@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Add Record{% endblock %}
+
+{% block page_title %}Add New Record{% endblock %}
+{% block page_description %}Create a new entry in the database.{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 800px;">
+    <form method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="first_name">First Name *</label>
+                <input type="text" id="first_name" name="first_name" value="{{ form_data.first_name if form_data else '' }}" required placeholder="John">
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" value="{{ form_data.last_name if form_data else '' }}" required placeholder="Doe">
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="national_id">National ID (10 digits)</label>
+                <input type="text" id="national_id" name="national_id" value="{{ form_data.national_id if form_data else '' }}" placeholder="1234567890">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone (+98xxxxxxxxxx)</label>
+                <input type="text" id="phone" name="phone" value="{{ form_data.phone if form_data else '' }}" placeholder="+989123456789">
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" value="{{ form_data.dob if form_data else '' }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="address">City</label>
+                <input type="text" id="address" name="address" value="{{ form_data.address if form_data else '' }}" placeholder="Tehran">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="tags">Tags (comma separated)</label>
+            <input type="text" id="tags" name="tags" value="{{ form_data.tags if form_data else '' }}" placeholder="vip, urgent, review">
+        </div>
+        
+        <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Additional information...">{{ form_data.notes if form_data else '' }}</textarea>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn">Add Record</button>
+            <a href="{{ url_for('records') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Preview Card -->
+<div class="table-container" style="margin-top: 2rem;">
+    <div class="table-header">
+        <h2>Form Preview</h2>
+        <span class="badge">All fields</span>
+    </div>
+    <div style="padding: 1rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            <div><span style="color: #94a3b8;">First Name:</span> <span id="preview-first_name">—</span></div>
+            <div><span style="color: #94a3b8;">Last Name:</span> <span id="preview-last_name">—</span></div>
+            <div><span style="color: #94a3b8;">National ID:</span> <span id="preview-national_id">—</span></div>
+            <div><span style="color: #94a3b8;">Phone:</span> <span id="preview-phone">—</span></div>
+            <div><span style="color: #94a3b8;">Birth Date:</span> <span id="preview-dob">—</span></div>
+            <div><span style="color: #94a3b8;">City:</span> <span id="preview-address">—</span></div>
+            <div><span style="color: #94a3b8;">Tags:</span> <span id="preview-tags">—</span></div>
+            <div><span style="color: #94a3b8;">Notes:</span> <span id="preview-notes">—</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Live preview
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input, textarea');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const fieldName = this.id;
+            const previewId = 'preview-' + fieldName;
+            const preview = document.getElementById(previewId);
+            
+            if (preview) {
+                preview.textContent = this.value || '—';
+            }
+        });
+        
+        // اجرای اولیه برای پر کردن preview با مقدارهای موجود
+        if (input.value) {
+            const fieldName = input.id;
+            const previewId = 'preview-' + fieldName;
+            const preview = document.getElementById(previewId);
+            
+            if (preview) {
+                preview.textContent = input.value;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

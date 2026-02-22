@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{# حذف page_title و page_description برای صفحه لاگین #}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <!-- پس‌زمینه گرافیکی -->
+    <div class="login-bg">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div>
+    </div>
+    
+    <!-- کارت لاگین -->
+    <div class="login-card">
+        <div class="logo-container">
+            <i class="fas fa-database"></i>
+            <h1>DATANA</h1>
+            <p>mini-local database</p>
+        </div>
+        
+        <form class="login-form" method="POST" id="loginForm">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" 
+                       id="username" 
+                       name="username" 
+                       placeholder="username" 
+                       value="{{ username if username else 'root' }}" 
+                       required
+                       autocomplete="off">
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       placeholder="password" 
+                       value="root" 
+                       required>
+                <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+            </div>
+            
+            {% if requires_2fa %}
+            <div class="input-group">
+                <i class="fas fa-shield-alt"></i>
+                <input type="text" 
+                       id="twofa_code" 
+                       name="twofa_code" 
+                       placeholder="2FA code" 
+                       autocomplete="off">
+            </div>
+            {% endif %}
+            
+            <button type="submit" class="login-btn">
+                <span>Login</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+        
+        <div class="login-footer">
+            <span class="default-creds">
+                <i class="fas fa-key" style="margin-right: 0.25rem;"></i>
+                root / root
+            </span>
+            <span class="version">
+                <i class="fas fa-code-branch"></i>
+                v1.1.0.3
+            </span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// نمایش/پنهان کردن پسورد
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.querySelector('.toggle-password');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// افکت ریپل برای اینپوت‌ها
+document.querySelectorAll('.input-group input').forEach(input => {
+    input.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.left = e.clientX - this.getBoundingClientRect().left + 'px';
+        ripple.style.top = e.clientY - this.getBoundingClientRect().top + 'px';
+        this.parentElement.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+
+// انیمیشن لوگو
+const logo = document.querySelector('.logo-container i');
+if (logo) {
+    setInterval(() => {
+        logo.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            logo.style.transform = 'scale(1)';
+        }, 200);
+    }, 3000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Reminders{% endblock %}
+
+{% block page_title %}Reminders{% endblock %}
+{% block page_description %}Manage your reminders and notifications.{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+    <!-- Add Reminder Form -->
+    <div class="form-container">
+        <h3 style="margin-bottom: 1.5rem;">Add New Reminder</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="add">
+            
+            <div class="form-group">
+                <label for="text">Reminder Text</label>
+                <input type="text" id="text" name="text" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="days">Days</label>
+                    <input type="number" id="days" name="days" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="hours">Hours</label>
+                    <input type="number" id="hours" name="hours" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="minutes">Minutes</label>
+                    <input type="number" id="minutes" name="minutes" min="0" value="0">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">Add Reminder</button>
+        </form>
+    </div>
+    
+    <!-- Reminders List -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>All Reminders</h2>
+            <span class="badge">{{ reminders|length }}</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Text</th>
+                    <th>Due</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reminder in reminders %}
+                <tr>
+                    <td>{{ reminder.id }}</td>
+                    <td>{{ reminder.text }}</td>
+                    <td>{{ reminder.due[:16] }}</td>
+                    <td>
+                        {% if reminder.completed %}
+                        <span class="status-badge" style="background: #6b728020; color: #9ca3af;">Completed</span>
+                        {% else %}
+                        <span class="status-badge">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not reminder.completed %}
+                        <form method="POST" style="display: inline;">
+                            <input type="hidden" name="action" value="complete">
+                            <input type="hidden" name="reminder_id" value="{{ reminder.id }}">
+                            <button type="submit" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">✓</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #94a3b8;">No reminders found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

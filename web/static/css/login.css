@@ -1,0 +1,300 @@
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+/* پس‌زمینه گرافیکی */
+.login-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);  /* افزایش blur برای تلفیق بهتر */
+    opacity: 0.25;  /* کاهش opacity */
+    animation: float 30s infinite ease-in-out;
+    mix-blend-mode: screen;  /* برای تلفیق با پس‌زمینه */
+}
+
+/* تنظیمات مخصوص لایت مود */
+[data-theme="light"] .bg-shape {
+    mix-blend-mode: multiply;  /* برای لایت مود */
+    opacity: 0.15;
+}
+
+.shape-1 {
+    width: 600px;
+    height: 600px;
+    background: var(--primary);
+    top: -200px;
+    right: -200px;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 700px;
+    height: 700px;
+    background: var(--secondary);
+    bottom: -250px;
+    left: -250px;
+    animation-delay: -7s;
+}
+
+.shape-3 {
+    width: 500px;
+    height: 500px;
+    background: var(--warning);
+    top: 30%;
+    left: 20%;
+    animation-delay: -14s;
+}
+
+/* اشکال اضافی برای تلفیق بهتر */
+.shape-4 {
+    width: 400px;
+    height: 400px;
+    background: var(--success);
+    bottom: 20%;
+    right: 15%;
+    animation-delay: -3s;
+    opacity: 0.2;
+    filter: blur(120px);
+}
+
+.shape-5 {
+    width: 550px;
+    height: 550px;
+    background: var(--error);
+    top: 40%;
+    right: 25%;
+    animation-delay: -10s;
+    opacity: 0.15;
+    filter: blur(150px);
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translate(0, 0) scale(1); 
+    }
+    25% { 
+        transform: translate(80px, 40px) scale(1.1); 
+    }
+    50% { 
+        transform: translate(40px, 120px) scale(0.95); 
+    }
+    75% { 
+        transform: translate(-60px, 60px) scale(1.05); 
+    }
+}
+
+/* کارت لاگین */
+.login-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 2rem;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: var(--glass-shadow);
+    position: relative;
+    z-index: 1;
+    animation: cardAppear 0.8s ease-out;
+}
+
+/* لوگو */
+.logo-container {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.logo-container i {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 30px var(--primary));
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.logo-container h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.5px;
+}
+
+.logo-container p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+/* فرم */
+.login-form {
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-group i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.input-group .toggle-password {
+    left: auto;
+    right: 1rem;
+    cursor: pointer;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    backdrop-filter: var(--glass-blur);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+/* دکمه لاگین */
+.login-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 1rem;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px var(--primary-soft);
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.login-btn:hover::before {
+    width: 400px;
+    height: 400px;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--primary);
+}
+
+/* فوتر */
+.login-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.default-creds {
+    background: var(--glass-bg);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+}
+
+.version {
+    font-family: monospace;
+    opacity: 0.7;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ریسپانسیو */
+@media (max-width: 768px) {
+    .login-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .bg-shape {
+        opacity: 0.15;
+    }
+    
+    .shape-1 {
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        right: -100px;
+    }
+    
+    .shape-2 {
+        width: 350px;
+        height: 350px;
+        bottom: -150px;
+        left: -150px;
+    }
+}

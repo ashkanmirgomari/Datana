@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Export{% endblock %}
+
+{% block page_title %}Export Data{% endblock %}
+{% block page_description %}Export records to CSV format.{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    <!-- Export Form -->
+    <div class="form-container">
+        <h3 style="margin-bottom: 1.5rem;">Create New Export</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label for="format">Export Format</label>
+                <select id="format" name="format">
+                    <option value="csv">CSV (Comma Separated Values)</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn">Export Now</button>
+        </form>
+    </div>
+    
+    <!-- Recent Exports -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Recent Exports</h2>
+            <span class="badge">{{ exports|length }}</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Modified</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for export in exports %}
+                <tr>
+                    <td>{{ export.name }}</td>
+                    <td>{{ (export.size / 1024)|round(1) }} KB</td>
+                    <td>{{ export.modified }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #94a3b8;">No exports found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

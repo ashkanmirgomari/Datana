@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Monitoring{% endblock %}
+
+{% block page_title %}System Monitoring{% endblock %}
+{% block page_description %}Real-time system metrics and analytics{% endblock %}
+
+{% block content %}
+<!-- Real-time Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card" id="cpu-card">
+        <div class="stat-title">CPU Usage</div>
+        <div class="stat-value" id="cpu-value">0%</div>
+        <div class="stat-change">
+            <div style="width: 100%; height: 4px; background: #0f172a; border-radius: 2px;">
+                <div id="cpu-bar" style="width: 0%; height: 4px; background: #3b82f6; border-radius: 2px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card" id="memory-card">
+        <div class="stat-title">Memory Usage</div>
+        <div class="stat-value" id="memory-value">0 GB / 0 GB</div>
+        <div class="stat-change">
+            <div style="width: 100%; height: 4px; background: #0f172a; border-radius: 2px;">
+                <div id="memory-bar" style="width: 0%; height: 4px; background: #10b981; border-radius: 2px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card" id="disk-card">
+        <div class="stat-title">Disk Usage</div>
+        <div class="stat-value" id="disk-value">0 GB / 0 GB</div>
+        <div class="stat-change">
+            <div style="width: 100%; height: 4px; background: #0f172a; border-radius: 2px;">
+                <div id="disk-bar" style="width: 0%; height: 4px; background: #f59e0b; border-radius: 2px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card" id="records-card">
+        <div class="stat-title">Total Records</div>
+        <div class="stat-value" id="records-value">0</div>
+        <div class="stat-change" id="records-change">+0 today</div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+    <!-- System Metrics Chart -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>System Metrics (Last 60 seconds)</h2>
+            <div>
+                <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem;" onclick="refreshChart()">↻</button>
+            </div>
+        </div>
+        <div style="padding: 1rem;">
+            <canvas id="systemChart" style="width: 100%; height: 250px;"></canvas>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Quick Stats</h2>
+        </div>
+        <div style="padding: 1rem;">
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Uptime</span>
+                    <span id="uptime">0d 0h 0m</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Active Users</span>
+                    <span id="active-users">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Database Size</span>
+                    <span id="db-size">0 KB</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Last Backup</span>
+                    <span id="last-backup">Never</span>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #334155; padding-top: 1rem;">
+                <h3 style="color: #e2e8f0; margin-bottom: 0.5rem;">Today's Activity</h3>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Records Added</span>
+                    <span id="today-adds">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Records Deleted</span>
+                    <span id="today-deletes">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.25rem;">
+                    <span>Searches</span>
+                    <span id="today-searches">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Process List -->
+<div class="table-container" style="margin-bottom: 1.5rem;">
+    <div class="table-header">
+        <h2>Top Processes</h2>
+        <span class="badge" id="process-count">0</span>
+    </div>
+    <div style="max-height: 200px; overflow-y: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                    <th>CPU %</th>
+                    <th>Memory %</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="process-list">
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #94a3b8;">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Alerts & Notifications -->
+<div class="table-container">
+    <div class="table-header">
+        <h2>System Alerts</h2>
+        <span class="badge" id="alert-count">0</span>
+    </div>
+    <div id="alerts-list" style="padding: 0.5rem;">
+        <div style="text-align: center; color: #94a3b8; padding: 1rem;">No active alerts</div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let systemChart;
+let chartData = {
+    labels: [],
+    cpu: [],
+    memory: [],
+    records: []
+};
+
+function initChart() {
+    const ctx = document.getElementById('systemChart').getContext('2d');
+    systemChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'CPU %',
+                    data: [],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Memory %',
+                    data: [],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Records',
+                    data: [],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: '#334155' },
+                    ticks: { color: '#94a3b8' }
+                },
+                y1: {
+                    position: 'right',
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#e2e8f0' } }
+            }
+        }
+    });
+}
+
+function updateMonitoring() {
+    fetch('/api/monitoring/stats')
+        .then(res => res.json())
+        .then(data => {
+            // Update CPU
+            document.getElementById('cpu-value').textContent = data.cpu + '%';
+            document.getElementById('cpu-bar').style.width = data.cpu + '%';
+            
+            // Update Memory
+            document.getElementById('memory-value').textContent = 
+                `${data.memory.used} GB / ${data.memory.total} GB`;
+            let memPercent = (data.memory.used / data.memory.total) * 100;
+            document.getElementById('memory-bar').style.width = memPercent + '%';
+            
+            // Update Disk
+            document.getElementById('disk-value').textContent = 
+                `${data.disk.used} GB / ${data.disk.total} GB`;
+            let diskPercent = (data.disk.used / data.disk.total) * 100;
+            document.getElementById('disk-bar').style.width = diskPercent + '%';
+            
+            // Update Records
+            document.getElementById('records-value').textContent = data.records.total;
+            document.getElementById('records-change').textContent = 
+                `+${data.records.today} today`;
+            
+            // Update Quick Stats
+            document.getElementById('uptime').textContent = data.uptime;
+            document.getElementById('active-users').textContent = data.active_users;
+            document.getElementById('db-size').textContent = data.db_size;
+            document.getElementById('last-backup').textContent = data.last_backup;
+            
+            // Update Today's Activity
+            document.getElementById('today-adds').textContent = data.activity.adds;
+            document.getElementById('today-deletes').textContent = data.activity.deletes;
+            document.getElementById('today-searches').textContent = data.activity.searches;
+            
+            // Update Chart
+            updateChart(data);
+        });
+}
+
+function updateChart(data) {
+    let now = new Date().toLocaleTimeString();
+    
+    chartData.labels.push(now);
+    chartData.cpu.push(data.cpu);
+    chartData.memory.push((data.memory.used / data.memory.total) * 100);
+    chartData.records.push(data.records.total);
+    
+    // Keep last 10 points
+    if (chartData.labels.length > 10) {
+        chartData.labels.shift();
+        chartData.cpu.shift();
+        chartData.memory.shift();
+        chartData.records.shift();
+    }
+    
+    systemChart.data.labels = chartData.labels;
+    systemChart.data.datasets[0].data = chartData.cpu;
+    systemChart.data.datasets[1].data = chartData.memory;
+    systemChart.data.datasets[2].data = chartData.records;
+    systemChart.update();
+}
+
+function updateProcesses() {
+    fetch('/api/monitoring/processes')
+        .then(res => res.json())
+        .then(data => {
+            let tbody = document.getElementById('process-list');
+            tbody.innerHTML = '';
+            document.getElementById('process-count').textContent = data.length;
+            
+            data.forEach(proc => {
+                let row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${proc.pid}</td>
+                    <td>${proc.name}</td>
+                    <td>${proc.cpu}%</td>
+                    <td>${proc.memory}%</td>
+                    <td><span class="status-badge">${proc.status}</span></td>
+                `;
+            });
+        });
+}
+
+function checkAlerts() {
+    fetch('/api/monitoring/alerts')
+        .then(res => res.json())
+        .then(data => {
+            let alertsDiv = document.getElementById('alerts-list');
+            document.getElementById('alert-count').textContent = data.length;
+            
+            if (data.length === 0) {
+                alertsDiv.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 1rem;">No active alerts</div>';
+            } else {
+                alertsDiv.innerHTML = '';
+                data.forEach(alert => {
+                    let alertItem = document.createElement('div');
+                    alertItem.style.cssText = `
+                        padding: 0.75rem;
+                        margin-bottom: 0.5rem;
+                        border-radius: 0.5rem;
+                        background: ${alert.type === 'error' ? '#dc262620' : '#f59e0b20'};
+                        border: 1px solid ${alert.type === 'error' ? '#dc2626' : '#f59e0b'};
+                        color: ${alert.type === 'error' ? '#f87171' : '#fbbf24'};
+                    `;
+                    alertItem.textContent = `[${alert.time}] ${alert.message}`;
+                    alertsDiv.appendChild(alertItem);
+                });
+            }
+        });
+}
+
+function refreshChart() {
+    chartData = { labels: [], cpu: [], memory: [], records: [] };
+    updateMonitoring();
+}
+
+// Auto-refresh every 5 seconds
+setInterval(updateMonitoring, 5000);
+setInterval(updateProcesses, 10000);
+setInterval(checkAlerts, 30000);
+
+// Initialize
+window.onload = function() {
+    initChart();
+    updateMonitoring();
+    updateProcesses();
+    checkAlerts();
+};
+</script>
+{% endblock %}
