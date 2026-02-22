@@ -4,7 +4,7 @@
   <p><strong>Mini Local Database Manager with CLI & Web Interface</strong></p>
   
   <p>
-    <img src="https://img.shields.io/badge/version-1.2.0-purple?style=for-the-badge" />
+    <img src="https://img.shields.io/badge/version-1.1.0.9-purple?style=for-the-badge" />
     <img src="https://img.shields.io/badge/python-3.8+-blue?style=for-the-badge" />
     <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" />
     <img src="https://img.shields.io/badge/Flask-2.3+-red?style=for-the-badge" />
@@ -16,7 +16,6 @@
     <a href="#-usage">Usage</a> •
     <a href="#-commands">Commands</a> •
     <a href="#-web-interface">Web Interface</a> •
-    <a href="#-screenshots">Screenshots</a>
   </p>
 </div>
 
