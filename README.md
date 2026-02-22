@@ -120,7 +120,7 @@ python run_web.py
 ### Record Operations
 | Command | Description | Example |
 |---------|-------------|---------|
-| `add -n FIRST -l LAST -nt ID -p PHONE -c CITY` | Add record | `add -n ashkan -l mirgomari -nt 1276297246 -p +989056703298 -c isfahan` |
+| `add -n FIRST -l LAST -nt ID -p PHONE -c CITY` | Add record | `add -n ashkan -l mirgomari -nt 1234567890 -p +989123456789 -c isfahan` |
 | `search -fn NAME -ln NAME -c CITY` | Search records | `search -fn ashkan -c isfahan` |
 | `view -id ID` | View record | `view -id ABC123` |
 | `edit -id ID` | Edit record | `edit -id ABC123` |
